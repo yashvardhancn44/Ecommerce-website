@@ -7,8 +7,10 @@ import {useParams} from 'react-router-dom';
 import Product from '../components/Product';
 // import products from '../products';
 // import axios from 'axios';
-
 import { useGetProductDetailsQuery } from '../slices/productsApiSlice';
+import Loader from '../components/Loader';
+import Message from '../components/Message';
+
 
 const ProductScreen = () => {
     // const [product, setProduct]=useState([]);
@@ -30,11 +32,11 @@ const ProductScreen = () => {
         <Link className='btn btn-light my-3' to='/'>
             Go Back
         </Link>
-
+        
         {isLoading?(
-            <h2>Loading...</h2>
+            <Loader/>
         ):error?(
-            <div>{error?.data?.message || error.error}</div>
+            <Message variant='danger'>{error?.data?.message || error.error}</Message>
         ):(
             <Row>
             <Col md={5}>
