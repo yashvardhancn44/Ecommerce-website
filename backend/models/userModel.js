@@ -28,7 +28,7 @@ userSchema.methods.matchPassword = async function (enteredPassword){
     return await bcrypt.compare(enteredPassword, this.password);
 };
 
-// while registering the user, we use this to hash the password and save it. .pre() is used to do an action before 'save'. 
+// ENCYRPTION: while registering the user, we use this to hash the password and save it. .pre() is used to do an action before 'save'. 
 userSchema.pre('save', async function (next){
     if(!this.isModified('password')){
         next();

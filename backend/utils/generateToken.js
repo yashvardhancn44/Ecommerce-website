@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 
 const generateToken = (res, userId)=>{
     const token = jwt.sign(
-        {userId: userId},
+        {userId: userId}, //this userId is used in authMiddleware in protected route functionality.
         process.env.JWT_SECRET,
         {expiresIn: '30d'}            
     )
