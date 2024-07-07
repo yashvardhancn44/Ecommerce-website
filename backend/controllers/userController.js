@@ -12,11 +12,11 @@ const authUser = asyncHandler( async (req, res)=>{
     const user = await User.findOne({email: email})
     if(user && (await user.matchPassword(password))){
         const token = jwt.sign(
-            {userid: user._id},
+            {userId: user._id},
             process.env.JWT_SECRET,
             {expiresIn: '30d'}            
         )
-        // set JWT token as a HTTP only cookie
+        // set JWT token as a HTTP only cookie. the token here is named as 'jwt'
         res.cookie('jwt', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV !== 'development',
