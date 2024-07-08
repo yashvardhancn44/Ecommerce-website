@@ -1,5 +1,5 @@
 //using createSlice here as opposed to the createApi used in apiSlice as we dont have to use async functionality here. 
-
+//using creatSlice here unlike CreateApiSlice ---> createApiSlice have some changes in how we export and all
 import { createSlice } from "@reduxjs/toolkit";
 import { updateCart } from "../utils/cartUtils";
 
@@ -36,10 +36,14 @@ const cartSlice = createSlice({
             state.shippingAddress = action.payload;
             return updateCart(state);
         },
+        savePaymentMethod: (state, action)=>{
+            state.paymentmethod = action.payload;
+            return updateCart(state);
+        }
 
     },
 });
 
-export const {addToCart, removeFromCart, saveShippingAddress} = cartSlice.actions;
+export const {addToCart, removeFromCart, saveShippingAddress, savePaymentMethod} = cartSlice.actions;
 
 export default cartSlice.reducer;
