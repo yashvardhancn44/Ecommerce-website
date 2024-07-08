@@ -3,8 +3,11 @@ import { apiSlice } from './apiSlice';
 
 // this is for the server and whatever is done in authSlice is for local stuffs - read on this once again. 
 
+
+//endpoint injections using mutations. 
 export const usersApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder)=>({
+
         login: builder.mutation({
             query:(data) =>({
                 url: `${USERS_URL}/auth`,
@@ -12,6 +15,15 @@ export const usersApiSlice = apiSlice.injectEndpoints({
                 body: data
             }),
         }),
+
+        register: builder.mutation({
+            query:(data) => ({
+                url: `${USERS_URL}`,
+                method: 'POST',
+                body: data,
+            })
+        }),
+
         logout: builder.mutation({
             query: ()=>({
                 url: `${USERS_URL}/logout`,
@@ -21,6 +33,6 @@ export const usersApiSlice = apiSlice.injectEndpoints({
     }),
 });
 
-export const { useLoginMutation, useLogoutMutation } = usersApiSlice;
+export const { useLoginMutation, useLogoutMutation , useRegisterMutation} = usersApiSlice;
 
 

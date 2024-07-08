@@ -19,8 +19,8 @@ const Header = () => {
   const [logoutApiCall] = useLogoutMutation();
   const logoutHandler = async()=>{
     try {
-      await logoutApiCall().unwrap();
-      dispatch(logout());
+      await logoutApiCall().unwrap(); //will do endpoint side stuffs (server side logout changes)
+      dispatch(logout()); // will do state and local storage cleaning. 
       navigate('/login');      
     } catch (err) {
       console.log(err)
