@@ -3,7 +3,8 @@ import {Row, Col, ListGroup, Image, Form, Button, Card} from 'react-bootstrap';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
 import { useGetOrderDetailsQuery, usePayOrderMutation, useGetPayPalClientIdQuery } from '../slices/ordersApiSlice';
-import {PayPalButtons, usePayPalScriptReducer} from '@paypal/react-paypal-js';
+import { usePayPalScriptReducer} from '@paypal/react-paypal-js';
+import {PayPalButtons} from '@paypal/react-paypal-js'
 import {toast} from 'react-toastify';
 import { useSelector } from 'react-redux';
 import { useEffect } from 'react';
@@ -43,6 +44,37 @@ const OrderScreen = () => {
         }
     },[order, paypal, paypalDispatch, loadingPayPal, errorPayPal]);
 
+    function onApprove(data, actions){
+        return actions.order.capture().then(async function(details){
+            try {
+                await payOrder({orderId, details});
+                refetch();                           //what does refetch() do?
+                toast.success('Payment Successful');
+            } catch (err) {
+                toast.error(err?.data?.message || err?.message)
+            }
+        });
+    };
+    async function onApproveTest(){
+        await payOrder({orderId, details:{payer: {}}});
+        refetch()                           //what does refetch() do?
+        toast.success('Payment Successful');
+    }
+    function onError(err){
+        toast.error(err.message)
+    }
+    function createOrder(data, actions){
+        return actions.order.create({
+            purchase_units: [
+                {
+                amount:{
+                    value: order.totalPrice
+                }
+            }]
+        }).then((orderId)=>{return orderId});
+    }
+
+
 
     return isLoading?(<Loader/>):(error? <Message variant='danger'/>:(
     <>
@@ -74,10 +106,10 @@ const OrderScreen = () => {
                         <p>
                             <strong>Method: </strong>{order.paymentMethod}
                         </p>
-                        {order.isPayed?(
-                            <Message variant='success'>Payed on: {order.payedAt}</Message>
+                        {order.isPaid?(
+                            <Message variant='success'>Paid on: {order.paidAt}</Message>
                         ):(
-                            <Message variant='danger'>Not Payed</Message>
+                            <Message variant='danger'>Not Paid</Message>
                         )}
                     </ListGroup.Item>
                     <ListGroup.Item>
@@ -127,6 +159,33 @@ const OrderScreen = () => {
                             </Row>
                         </ListGroup.Item>
                         {/*  Pay order placeholder */}
+                        {!order.isPaid && (
+                            <ListGroup.Item>
+                            {loadingPay && <Loader />}
+                            {isPending ? (
+                                <Loader />
+                            ) : (
+                                <div>
+                                {/* THIS BUTTON IS FOR TESTING! REMOVE BEFORE PRODUCTION! */}
+                               <Button
+                                    style={{ marginBottom: '10px' }}
+                                    onClick={onApproveTest}
+                                >
+                                    Test Pay Order
+                                </Button>
+
+                                {/* <div>
+                                    <PayPalButtons
+                                    createOrder={createOrder}
+                                    onApprove={onApprove}
+                                    onError={onError}
+                                    ></PayPalButtons>
+                                </div> */}
+                                </div>
+                            )}
+                            </ListGroup.Item>
+                        )}
+
                         {/*  Mark as Delivered placeholder */}
                     </ListGroup>
                 </Card>
