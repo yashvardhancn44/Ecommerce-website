@@ -22,7 +22,7 @@ const ProductEditScreen = () => {
     
     const [updateProduct, { isLoading: loadingUpdate }] = useUpdateProductMutation();
 
-    const [uploadProductImage,{isLoading:loadingUplaod}] = useUploadProductImageMutation();
+    const [uploadProductImage,{isLoading:loadingUpload}] = useUploadProductImageMutation();
 
     const navigate = useNavigate();
 
@@ -56,6 +56,7 @@ const ProductEditScreen = () => {
             toast.error(result.error);
         }else{
             toast.success('Product updated');
+            refetch();
             navigate('/admin/productlist')
         }
       }
@@ -118,6 +119,7 @@ const ProductEditScreen = () => {
                                     label='choose file'
                                     onChange={uploadFileHandler}
                                 ></Form.Control>
+                                {loadingUpload && <Loader />}
                             </Form.Group>
                         
                             <Form.Group controlId='brand'className='my-2'>
