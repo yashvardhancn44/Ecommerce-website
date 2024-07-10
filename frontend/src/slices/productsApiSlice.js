@@ -7,6 +7,7 @@ export const productApiSlice = apiSlice.injectEndpoints({
             query:()=>({
                 url: PRODUCTS_URL,
             }),
+            providesTags: ['Products'] ,//avoids us from doing refersh again
             keepUnusedDataFor:5,
         }),
         getProductDetails: builder.query({
@@ -21,8 +22,20 @@ export const productApiSlice = apiSlice.injectEndpoints({
                 method: 'POST'
             }),
             invalidatesTags: ['Product'],//An endpoint definition that alters data on the server or will possibly invalidate the cache.
+        }),
+        updateProduct: builder.mutation({
+            query: (data)=>({
+                url: `${PRODUCTS_URL}/${data.productId}`,
+                method: 'PUT',
+                body: data
+            }),
+            invalidatesTags: ['Products'],
         })
     }),
 });
 
-export const {useGetProductsQuery, useGetProductDetailsQuery, useCreateProductMutation} = productApiSlice;
+export const {
+    useGetProductsQuery, 
+    useGetProductDetailsQuery, 
+    useCreateProductMutation, 
+    useUpdateProductMutation} = productApiSlice;
