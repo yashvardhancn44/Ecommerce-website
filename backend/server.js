@@ -1,5 +1,5 @@
 //the entry point
-
+import path from 'path'; //keeping built in node modules at the top
 import express from 'express';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
@@ -10,6 +10,7 @@ import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 import productRoutes from './routes/productRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
+import uploadRoutes from './routes/uploadRoutes.js';
 
 const port = process.env.PORT || 5000;
 
@@ -31,8 +32,14 @@ app.get('/', (req, res)=>{
 app.use('/api/products',productRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/orders',orderRoutes);
+app.use('/api/upload',uploadRoutes)
+
 
 app.get('/api/config/paypal', (req, res)=>res.send({cliendId:process.env.PAYPAL_CLIENT_ID}));
+
+const __dirname = path.resolve(); //set __dirname to current directory
+app.use('/uploads',express.static(path.join(__dirname, '/uploads'))); // to make the folder Static
+
 
 app.use(notFound);
 app.use(errorHandler);
