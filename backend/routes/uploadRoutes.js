@@ -6,7 +6,7 @@ const router =express.Router();
 const storage = multer.diskStorage({
     destination(req, file, cb){
         //cb is callback here
-        cb(null, 'upload/'); // first argument is an error here
+        cb(null, 'uploads/'); // first argument is an error here
     },
     filename(req,file,cb){
         cb(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`);
@@ -30,7 +30,7 @@ const upload = multer({
 
 router.post('/', upload.single('image'),(req,res)=>{
     res.send({
-        messsage: 'Image Uploaded',
+        message: 'Image Uploaded',
         image: `/${req.file.path}`
     });
 })
