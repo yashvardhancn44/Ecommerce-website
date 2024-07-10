@@ -2,7 +2,7 @@ import {Link, useParams} from 'react-router-dom';
 import {Row, Col, ListGroup, Image, Form, Button, Card} from 'react-bootstrap';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
-import { useGetOrderDetailsQuery, usePayOrderMutation, useGetPayPalClientIdQuery } from '../slices/ordersApiSlice';
+import { useGetOrderDetailsQuery, usePayOrderMutation, useGetPayPalClientIdQuery, useDeliverOrderMutation } from '../slices/ordersApiSlice';
 import { usePayPalScriptReducer} from '@paypal/react-paypal-js';
 import {PayPalButtons} from '@paypal/react-paypal-js'
 import {toast} from 'react-toastify';
@@ -20,6 +20,7 @@ const OrderScreen = () => {
     console.log(order);
   
     const [payOrder, {isLoading: loadingPay}] = usePayOrderMutation();
+    const [deliverOrder, {isLoading:loadingDeliver}] = useDeliverOrderMutation();
     const [{isPending}, paypalDispatch] = usePayPalScriptReducer();
     const {data: paypal, isLoading: loadingPayPal, error: errorPayPal} = useGetPayPalClientIdQuery();
 
@@ -44,35 +45,47 @@ const OrderScreen = () => {
         }
     },[order, paypal, paypalDispatch, loadingPayPal, errorPayPal]);
 
-    function onApprove(data, actions){
-        return actions.order.capture().then(async function(details){
-            try {
-                await payOrder({orderId, details});
-                refetch();                           //what does refetch() do?
-                toast.success('Payment Successful');
-            } catch (err) {
-                toast.error(err?.data?.message || err?.message)
-            }
-        });
-    };
     async function onApproveTest(){
         await payOrder({orderId, details:{payer: {}}});
         refetch()                           //what does refetch() do?
         toast.success('Payment Successful');
     }
-    function onError(err){
-        toast.error(err.message)
+
+    const deliverOrderHandler = async()=>{
+        try {
+            await deliverOrder(orderId);
+            refetch()
+            toast.success('Order Delivered')
+        } catch (err) {
+            toast.error(err?.data?.message || err.message)
+        }
     }
-    function createOrder(data, actions){
-        return actions.order.create({
-            purchase_units: [
-                {
-                amount:{
-                    value: order.totalPrice
-                }
-            }]
-        }).then((orderId)=>{return orderId});
-    }
+
+    // function onApprove(data, actions){
+    //     return actions.order.capture().then(async function(details){
+    //         try {
+    //             await payOrder({orderId, details});
+    //             refetch();                           //what does refetch() do?
+    //             toast.success('Payment Successful');
+    //         } catch (err) {
+    //             toast.error(err?.data?.message || err?.message)
+    //         }
+    //     });
+    // };
+
+    // function onError(err){
+    //     toast.error(err.message)
+    // }
+    // function createOrder(data, actions){
+    //     return actions.order.create({
+    //         purchase_units: [
+    //             {
+    //             amount:{
+    //                 value: order.totalPrice
+    //             }
+    //         }]
+    //     }).then((orderId)=>{return orderId});
+    // }
 
 
 
@@ -187,6 +200,14 @@ const OrderScreen = () => {
                         )}
 
                         {/*  Mark as Delivered placeholder */}
+                        {loadingDeliver && <Loader/>}
+                        {userInfo && userInfo.isAdmin && order.isPaid && !order.isDelivered && (
+                            <ListGroup.Item>
+                                <Button type='button' className='btn btn-block' onClick={deliverOrderHandler} >
+                                    Mark as Delivered
+                                </Button>
+                            </ListGroup.Item>
+                        )}
                     </ListGroup>
                 </Card>
             </Col>
