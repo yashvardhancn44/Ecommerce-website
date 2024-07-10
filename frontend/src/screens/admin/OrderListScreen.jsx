@@ -4,7 +4,7 @@ import {Table, Button} from 'react-bootstrap';
 import {FaTimes} from 'react-icons/fa'
 import Message from '../../components/Message';
 import Loader from '../../components/Loader';
-import { useDispatch, useSelector } from 'react-redux';
+// import { useDispatch, useSelector } from 'react-redux';
 import { useGetOrdersQuery } from '../../slices/ordersApiSlice';
 
 const OrderListScreen = () => {
