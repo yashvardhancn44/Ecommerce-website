@@ -9,7 +9,7 @@ import Product from '../models/productModel.js';
 //access: Public
 const getProducts = asyncHandler(async(req, res)=>{
     
-    const pageSize=8; // TO CHANGE THE NUMBER OF ITEMS PER PAGE
+    const pageSize=process.env.PAGINATION_LIMIT; // TO CHANGE THE NUMBER OF ITEMS PER PAGE
     
     const page = Number(req.query.pageNumber) || 1;
 
